@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use App\ApiResource\Tag;
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -39,6 +40,7 @@ class Article
     private Collection $comments;
 
     #[ORM\Column]
+    #[Assert\Choice(choices: Tag::ALLOWED_TAGS, multiple: true)]
     private array $tags = [];
 
     public function __construct()
