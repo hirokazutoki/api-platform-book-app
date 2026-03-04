@@ -38,6 +38,9 @@ class Article
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'article', orphanRemoval: true)]
     private Collection $comments;
 
+    #[ORM\Column]
+    private array $tags = [];
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -110,6 +113,18 @@ class Article
                 $comment->setArticle(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    public function setTags(array $tags): static
+    {
+        $this->tags = $tags;
 
         return $this;
     }
