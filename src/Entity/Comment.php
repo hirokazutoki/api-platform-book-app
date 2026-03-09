@@ -15,11 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ORM\Table(name: 'comments')]
-#[GetCollection(openapi: new Operation(summary: 'コメントの一覧を取得する。'))]
-#[Post(openapi: new Operation(summary: 'コメントを新規作成する。'))]
-#[Get(openapi: new Operation(summary: '指定したコメントの詳細を取得する。'))]
-#[Delete(openapi: new Operation(summary: '指定したコメントを削除する。'))]
-#[Patch(openapi: new Operation(summary: '指定したコメントを更新する。'))]
 class Comment
 {
     #[ORM\Id]
@@ -63,5 +58,16 @@ class Comment
         $this->content = $content;
 
         return $this;
+    }
+
+    public static function apiResource(): array
+    {
+        return [
+            new GetCollection(openapi: new Operation(summary: 'コメントの一覧を取得する。')),
+            new Post(openapi: new Operation(summary: 'コメントを新規作成する。')),
+            new Get(openapi: new Operation(summary: '指定したコメントの詳細を取得する。')),
+            new Delete(openapi: new Operation(summary: '指定したコメントを削除する。')),
+            new Patch(openapi: new Operation(summary: '指定したコメントを更新する。')),
+        ];
     }
 }
