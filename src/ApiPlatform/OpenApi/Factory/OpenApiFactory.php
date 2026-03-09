@@ -32,6 +32,9 @@ class OpenApiFactory implements OpenApiFactoryInterface
                     continue;
                 }
 
+                // summary を description にコピー
+                $operation = $operation->withDescription($operation->getSummary() ?? '');
+
                 // PUT /api/articles/{id}/publication ではリクエストボディを削除
                 if (strtolower($method) === 'put' && $path === '/api/articles/{id}/publication') {
                     $operation = $operation->withrequestBody();
