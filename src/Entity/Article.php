@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\OpenApi\Model\Operation;
 use App\ApiResource\Tag;
 use App\Repository\ArticleRepository;
 use App\State\ArticlePostProcessor;
@@ -19,8 +19,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ORM\Table(name: 'articles')]
-#[Post(processor: ArticlePostProcessor::class)]
-#[GetCollection, Get, Delete, Patch]
+#[GetCollection(openapi: new Operation(summary: 'ブログ記事の一覧を取得する。'))]
+#[Post(
+    openapi: new Operation(summary: 'ブログ記事を新規作成する。'),
+    processor: ArticlePostProcessor::class,
+)]
+#[Get(openapi: new Operation(summary: '指定したブログ記事の詳細を取得する。'))]
+#[Delete(openapi: new Operation(summary: '指定したブログ記事を削除する。'))]
+#[Patch(openapi: new Operation(summary: '指定したブログ記事を更新する。'))]
 class Article
 {
     #[ORM\Id]
