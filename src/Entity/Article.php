@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -45,6 +46,9 @@ class Article
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'article', orphanRemoval: true)]
     private Collection $comments;
 
+    /**
+     * @var array<string>
+     */
     #[ORM\Column]
     #[Assert\Choice(choices: Tag::ALLOWED_TAGS, multiple: true)]
     private array $tags = [];
