@@ -38,8 +38,7 @@ class Article
     private ?string $content = null;
 
     #[ORM\Column]
-    #[Assert\NotNull]
-    private ?bool $published = null;
+    private bool $published = false;
 
     /**
      * @var Collection<int, Comment>
@@ -88,7 +87,7 @@ class Article
         return $this;
     }
 
-    public function isPublished(): ?bool
+    public function isPublished(): bool
     {
         return $this->published;
     }
