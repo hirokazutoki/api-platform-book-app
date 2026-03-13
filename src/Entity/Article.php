@@ -64,9 +64,16 @@ class Article
     #[Groups(['article:read:item', 'article:read:list'])]
     private array $tags = [];
 
+    /**
+     * @var Collection<int, self>
+     */
+    #[ORM\ManyToMany(targetEntity: self::class)]
+    private Collection $relatedArticles;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->relatedArticles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -148,6 +155,30 @@ class Article
     public function setTags(array $tags): static
     {
         $this->tags = $tags;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getRelatedArticles(): Collection
+    {
+        return $this->relatedArticles;
+    }
+
+    public function addRelatedArticle(self $relatedArticle): static
+    {
+        if (!$this->relatedArticles->contains($relatedArticle)) {
+            $this->relatedArticles->add($relatedArticle);
+        }
+
+        return $this;
+    }
+
+    public function removeRelatedArticle(self $relatedArticle): static
+    {
+        $this->relatedArticles->removeElement($relatedArticle);
 
         return $this;
     }
