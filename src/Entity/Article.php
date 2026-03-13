@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -68,6 +69,8 @@ class Article
      * @var Collection<int, self>
      */
     #[ORM\ManyToMany(targetEntity: self::class)]
+    #[Groups(['article:read:item', 'article:write'])]
+    #[ApiProperty(readableLink: false, writableLink: false)]
     private Collection $relatedArticles;
 
     public function __construct()
