@@ -21,6 +21,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
@@ -70,7 +71,7 @@ class Article
      */
     #[ORM\ManyToMany(targetEntity: self::class)]
     #[Groups(['article:read:item', 'article:write'])]
-    #[ApiProperty(readableLink: false, writableLink: false)]
+    #[MaxDepth(1)]
     private Collection $relatedArticles;
 
     public function __construct()
