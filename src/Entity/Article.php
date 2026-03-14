@@ -80,6 +80,13 @@ class Article
         $this->relatedArticles = new ArrayCollection();
     }
 
+    #[Groups(['article:read:item', 'article:read:list'])]
+    #[ApiProperty(required: true)]
+    public function isPopular(): bool
+    {
+        return count($this->comments) >= 10;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
