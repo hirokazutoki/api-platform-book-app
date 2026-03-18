@@ -74,6 +74,10 @@ class Article
     #[MaxDepth(1)]
     private Collection $relatedArticles;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank]
+    private ?\DateTime $date = null;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -190,6 +194,18 @@ class Article
     public function removeRelatedArticle(self $relatedArticle): static
     {
         $this->relatedArticles->removeElement($relatedArticle);
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTime
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTime $date): static
+    {
+        $this->date = $date;
 
         return $this;
     }
