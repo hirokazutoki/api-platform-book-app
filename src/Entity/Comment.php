@@ -5,9 +5,11 @@ namespace App\Entity;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
+use ApiPlatform\OpenApi\Model\Parameter;
 use App\Repository\CommentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -66,7 +68,27 @@ class Comment
     public static function apiResource(): array
     {
         return [
-            new GetCollection(openapi: new Operation(summary: 'コメントの一覧を取得する。')),
+            new GetCollection(
+                uriTemplate: '/articles/{articleId}/comments',
+                uriVariables: [
+                    'articleId' => new Link(
+                        toProperty: 'article',
+                        fromClass: Article::class,
+                    ),
+                ],
+                openapi: new Operation(
+                    summary: '指定したブログ記事に対するコメントの一覧を取得する。',
+                    parameters: [
+                        new Parameter(
+                            name: 'articleId',
+                            in: 'path',
+                            description: 'ブログ記事ID',
+                            required: true,
+                            schema: ['type' => 'integer'],
+                        ),
+                    ],
+                ),
+            ),
             new Post(openapi: new Operation(summary: 'コメントを新規作成する。')),
             new Get(openapi: new Operation(summary: '指定したコメントの詳細を取得する。')),
             new Delete(openapi: new Operation(summary: '指定したコメントを削除する。')),
