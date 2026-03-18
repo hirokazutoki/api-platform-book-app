@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\OpenApi\Model\Operation;
 use ApiPlatform\OpenApi\Model\Parameter;
+use ApiPlatform\State\CreateProvider;
 use App\Repository\CommentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -89,7 +90,28 @@ class Comment
                     ],
                 ),
             ),
-            new Post(openapi: new Operation(summary: 'コメントを新規作成する。')),
+            new Post(
+                uriTemplate: '/articles/{articleId}/comments',
+                uriVariables: [
+                    'articleId' => new Link(
+                        toProperty: 'article',
+                        fromClass: Article::class,
+                    ),
+                ],
+                openapi: new Operation(
+                    summary: '指定したブログ記事に対するコメントを新規作成する。',
+                    parameters: [
+                        new Parameter(
+                            name: 'articleId',
+                            in: 'path',
+                            description: 'ブログ記事ID',
+                            required: true,
+                            schema: ['type' => 'integer'],
+                        ),
+                    ],
+                ),
+                provider: CreateProvider::class,
+            ),
             new Get(openapi: new Operation(summary: '指定したコメントの詳細を取得する。')),
             new Delete(openapi: new Operation(summary: '指定したコメントを削除する。')),
             new Patch(openapi: new Operation(summary: '指定したコメントを更新する。')),
