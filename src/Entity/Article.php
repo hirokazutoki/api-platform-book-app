@@ -21,6 +21,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Attribute\Context;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -79,6 +80,16 @@ class Article
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank]
+    #[Groups(['article:read:item', 'article:read:list', 'article:write'])]
+    #[Context(['date-format' => 'Y-m-d'])]
+    #[ApiProperty(
+        required: true,
+        schema: [
+            'type' => 'string',
+            'format' => 'date',
+            'example' => '2026-01-01',
+        ],
+    )]
     private ?\DateTime $date = null;
 
     public function __construct()
@@ -92,6 +103,28 @@ class Article
     public function isPopular(): bool
     {
         return count($this->comments) >= 10;
+    }
+
+    #[Groups(['article:read:item'])]
+    #[ApiProperty(required: true)]
+    #[ApiProperty(
+        required: true,
+        schema: ['type' => 'string', 'format' => 'date-time'],
+    )]
+    public function getCreatedAt(): ?\DateTime
+    {
+        return $this->createdAt;
+    }
+
+    #[Groups(['article:read:item'])]
+    #[ApiProperty(required: true)]
+    #[ApiProperty(
+        required: true,
+        schema: ['type' => 'string', 'format' => 'date-time'],
+    )]
+    public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updatedAt;
     }
 
     public function getId(): ?int
