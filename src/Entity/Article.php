@@ -14,7 +14,6 @@ use ApiPlatform\OpenApi\Model\Operation;
 use ApiPlatform\OpenApi\Model\Parameter;
 use App\ApiResource\Tag;
 use App\Repository\ArticleRepository;
-use App\State\ArticlePostProcessor;
 use App\State\ArticlePublishProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -259,7 +258,6 @@ class Article
             ),
             new Post(
                 openapi: new Operation(summary: 'ブログ記事を新規作成する。'),
-                processor: ArticlePostProcessor::class,
             ),
             new Get(
                 openapi: new Operation(
