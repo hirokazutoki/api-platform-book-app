@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -18,7 +19,6 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
-#[ORM\Table(name: 'comments')]
 class Comment
 {
     #[ORM\Id]
@@ -27,14 +27,17 @@ class Comment
     #[Groups(['article:read:item'])]
     private ?int $id = null;
 
+    /**
+     * #required-on-read
+     */
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotNull]
+    #[Groups(['comment:write:patch'])]
     private ?Article $article = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotNull]
-    #[Groups(['article:read:item'])]
+    #[Assert\NotBlank]
+    #[Groups(['comment:write', 'article:read:item'])]
     private ?string $content = null;
 
     public function getId(): ?int
@@ -69,6 +72,9 @@ class Comment
     public static function apiResource(): array
     {
         return [
+            new ApiResource(
+                denormalizationContext: ['groups' => ['comment:write']],
+            ),
             new GetCollection(
                 uriTemplate: '/articles/{articleId}/comments',
                 uriVariables: [
@@ -114,7 +120,21 @@ class Comment
             ),
             new Get(openapi: new Operation(summary: '指定したコメントの詳細を取得する。')),
             new Delete(openapi: new Operation(summary: '指定したコメントを削除する。')),
-            new Patch(openapi: new Operation(summary: '指定したコメントを更新する。')),
+            new Patch(
+                openapi: new Operation(
+                    summary: '指定したコメントを更新する。',
+                    parameters: [
+                        new Parameter(
+                            name: 'id',
+                            in: 'path',
+                            description: 'コメントID',
+                            required: true,
+                            schema: ['type' => 'integer'],
+                        ),
+                    ],
+                ),
+                denormalizationContext: ['groups' => ['comment:write', 'comment:write:patch']],
+            ),
         ];
     }
 }
