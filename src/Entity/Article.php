@@ -34,7 +34,7 @@ class Article
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['article:read:item', 'article:read:list', 'article:write'])]
+    #[Groups(['article:read:item', 'article:read:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -66,7 +66,7 @@ class Article
      */
     #[ORM\Column]
     #[Assert\Choice(choices: Tag::ALLOWED_TAGS, multiple: true)]
-    #[Groups(['article:read:item', 'article:read:list'])]
+    #[Groups(['article:read:item', 'article:read:list', 'article:write'])]
     private array $tags = [];
 
     /**
@@ -80,7 +80,7 @@ class Article
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank]
     #[Groups(['article:read:item', 'article:read:list', 'article:write'])]
-    #[Context(['date-format' => 'Y-m-d'])]
+    #[Context(['datetime_format' => 'Y-m-d'])]
     #[ApiProperty(
         required: true,
         schema: [
@@ -105,7 +105,6 @@ class Article
     }
 
     #[Groups(['article:read:item'])]
-    #[ApiProperty(required: true)]
     #[ApiProperty(
         required: true,
         schema: ['type' => 'string', 'format' => 'date-time'],
@@ -116,7 +115,6 @@ class Article
     }
 
     #[Groups(['article:read:item'])]
-    #[ApiProperty(required: true)]
     #[ApiProperty(
         required: true,
         schema: ['type' => 'string', 'format' => 'date-time'],
@@ -249,12 +247,12 @@ class Article
     {
         return [
             new ApiResource(
-                normalizationContext: ['groups' => 'article:read:item'],
-                denormalizationContext: ['groups' => 'article:write'],
+                normalizationContext: ['groups' => ['article:read:item']],
+                denormalizationContext: ['groups' => ['article:write']],
             ),
             new GetCollection(
                 openapi: new Operation(summary: 'ブログ記事の一覧を取得する。'),
-                normalizationContext: ['groups' => 'article:read:list'],
+                normalizationContext: ['groups' => ['article:read:list']],
             ),
             new Post(
                 openapi: new Operation(summary: 'ブログ記事を新規作成する。'),
@@ -286,6 +284,7 @@ class Article
                         ),
                     ],
                 ),
+                security: 'is_granted("EDIT", object)',
             ),
             new Patch(
                 openapi: new Operation(

@@ -3,13 +3,14 @@
 namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Article;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 
 #[AsDecorator(decorates: 'api_platform.state_processor.write')]
-class ArticleWriteProcessor implements ProcessorInterface
+class AppWriteProcessor implements ProcessorInterface
 {
     public function __construct(
         private ProcessorInterface $decorated,
