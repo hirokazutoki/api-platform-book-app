@@ -40,7 +40,7 @@ class MediaObject
         required: true,
         types: ['https://schema.org/contentUrl'],
     )]
-    #[Groups('media_object:read:item')]
+    #[Groups(['media_object:read:item', 'article:read:item'])]
     public ?string $contentUrl = null;
 
     public function getId(): ?int
