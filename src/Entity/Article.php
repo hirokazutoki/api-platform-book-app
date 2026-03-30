@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
-use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
@@ -27,7 +25,6 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiFilter(RangeFilter::class, properties: ['id'])]
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ORM\Table(name: 'articles')]
 class Article
@@ -268,8 +265,6 @@ class Article
             new ApiResource(
                 normalizationContext: ['groups' => ['article:read:item']],
                 denormalizationContext: ['groups' => ['article:write']],
-                order: ['id' => 'ASC'],
-                paginationViaCursor: [['field' => 'id', 'direction' => 'ASC']],
             ),
             new GetCollection(
                 openapi: new Operation(summary: 'ブログ記事の一覧を取得する。'),
